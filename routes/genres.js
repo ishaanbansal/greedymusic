@@ -52,8 +52,8 @@ module.exports = function(){
 				if(err)
 					res.send(err);
 
-				for( i in req.body ){
-					genre[i] = req.body[i]
+				for( i in req.body.data ){
+					genre[i] = req.body.data[i]
 				}
 
 				genre.save(function(err, genre){

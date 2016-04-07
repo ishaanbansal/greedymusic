@@ -6,7 +6,7 @@
 
  //Initialize App 
 var app = angular.module('musicApp', ['ngRoute', 'ngResource']);
-app.factory('Entry',function($resource){
+app.factory('Track',function($resource){
     return $resource('/v1/tracks/:id',{id: '@_id'},{
         update:{
             method: 'POST'
@@ -16,26 +16,29 @@ app.factory('Entry',function($resource){
         }
     });
 });
+app.factory('Genre',function($resource){
+    return $resource('/v1/genres/:id',{id: '@_id'},{
+        update:{
+            method: 'POST'
+        }
+    });
+});
 var controllers = {};
 var genres={}, selectedTrack;
-controllers.homeController = function($scope, $http, $location, Entry) {
+controllers.homeController = function($scope, $http, $location, Track, Genre) {
     $scope.tracks = {};
     
     //load all genres
-    $http.get('/v1/genres/').success(function(data){
-            for(var d in data){
-                genres[data[d]._id]=data[d].name;
+    var genreList =  Genre.query(function(){
+            for(var d in genreList){
+                genres[genreList[d]._id]=genreList[d].name;
             }
         });
 
     $scope.getTracks = function(){
-        var entries =  Entry.query(function(){
+        var entries =  Track.query(function(){
             $scope.tracks = entries;
         });
-        //$http.get('/v1/tracks/').success(function(data){
-          //  $scope.tracks = data;
-        //});
-
     }
     $scope.getGenreName = function(id){
         return genres[id];
@@ -51,7 +54,7 @@ controllers.homeController = function($scope, $http, $location, Entry) {
     setInterval(initStarRating,200);
 }
 
-controllers.trackController = function($scope, $http, $location, Entry) {
+controllers.trackController = function($scope, $http, $location, Track, Genre) {
     $scope.trackGenres = [];
     
     $scope.addTrack = function(){
@@ -63,14 +66,11 @@ controllers.trackController = function($scope, $http, $location, Entry) {
         if($scope.trackGenres.length)
             track.genres = $scope.trackGenres;
         
-        var saveTrack = new Entry();
+        var saveTrack = new Track();
         saveTrack = track;
-        Entry.save(saveTrack,function(){
+        Track.save(saveTrack,function(){
             $location.path('/');
         });
-        //$http.post('/v1/tracks/', track).success(function(data){
-          //  $location.path('/');
-        //});
     }
     $scope.editTrack = function(){
         var track = {};
@@ -83,25 +83,19 @@ controllers.trackController = function($scope, $http, $location, Entry) {
         else
             track.genres = [];
         
-        var edit = Entry.get({id: selectedTrack._id}, function(){
+        var edit = Track.get({id: selectedTrack._id}, function(){
             edit.data = track;
             edit.$update(function(){
                 $location.path('/');
             })
         });
-        //$http.post('/v1/tracks/'+selectedTrack._id, track).success(function(data){
-          //  $location.path('/');
-        //});
     }
     $scope.deleteTrack = function(){
-        var del = Entry.get({id: selectedTrack._id}, function(){
+        var del = Track.get({id: selectedTrack._id}, function(){
             del.$delete(function(){
                 $location.path('/');
             })
-        })
-        //$http.delete('/v1/tracks/'+selectedTrack._id).success(function(data){
-          //  $location.path('/');
-        //});
+        });
     }
     $scope.loadSelectedTrack = function(){
         $scope.title = selectedTrack.title;
@@ -134,14 +128,18 @@ controllers.trackController = function($scope, $http, $location, Entry) {
     //Genre related
     $scope.genreList = {};
     $scope.getGenres = function(){
-        $http.get('/v1/genres/').success(function(data){
-            $scope.genreList = data;
+        var genresList =  Genre.query(function(){
+            $scope.genreList = genresList;
+            for ( var d in genresList){
+                genres[genresList[d]._id] = genresList[d].name;
+            }
         });
     }
     $scope.addGenre = function(){
-        $http.post('/v1/genres/',{'name':$scope.genreSearch}).success(function(data){
+        var saveGenre = new Genre();
+        saveGenre = {'name':$scope.genreSearch};
+        Genre.save(saveGenre,function(){
             $scope.getGenres();
-            genres[data._id]=data.name;
         });
     }
     $scope.getGenreName = function(id){
@@ -154,8 +152,11 @@ controllers.trackController = function($scope, $http, $location, Entry) {
     }
     $scope.editGenreName = function(){
         genreInConsideration.name = $scope.name;
-        $http.post('/v1/genres/'+genreInConsideration._id, genreInConsideration).success(function(data){
-            genres[data._id]=data.name;
+        var edit = Genre.get({id: genreInConsideration._id}, function(){
+            edit.data = genreInConsideration;
+            edit.$update(function(){
+                $scope.getGenres();
+            })
         });
     }
     $('#input-star').rating();
