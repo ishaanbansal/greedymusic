@@ -62,8 +62,8 @@ module.exports = function(){
 				if(err)
 					res.send(err);
 
-				for( i in req.body ){
-					track[i] = req.body[i]
+				for( i in req.body.data ){
+					track[i] = req.body.data[i]
 				}
 
 				track.save(function(err, track){
