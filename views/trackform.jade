@@ -1,0 +1,14 @@
+.row
+	input(type="text" name="title" placeholder='title' ng-model='title' autofocus).form-control
+br
+.row
+	div.btn.btn-info(ng-repeat='gen in trackGenres')
+		| {{ getGenreName(gen) }}
+		span(ng-click='removeGenre(gen)') &nbsp;&nbsp;&nbsp;&nbsp;x
+br
+.row
+	div(ng-click='toggleGenreBox()').btn.btn-default.col-md-6
+		span + genre
+	.col-md-5.col-md-offset-1
+		input#input-star.rating.rating-loading(ng-model='rating' data-size='xs' data-min="0" data-max="5" data-step="0.1")
+include genre

@@ -1,0 +1,20 @@
+.col-md-8.col-md-offset-2
+    center
+      h1 Music Tracks
+      hr
+    div(ng-init='getTracks()')
+      .input-group
+        input(type='text' name='query' ng-model='query' placeholder='Search Title' autofocus).form-control
+        .input-group-addon(ng-click='query=""') 
+          strong x
+      br
+      .list-group
+        a.list-group-item(ng-repeat='track in tracks | searchFor:query:"title"' ng-click='selectTrack(track)')
+          h4 {{ track.title }} 
+          span.small(ng-repeat='genre in track.genres')
+            | {{ " "+getGenreName(genre) +" "}}
+            span(ng-hide='$last') |
+          span.rating-info
+            input.rating-track.rating(ng-model="track.rating" data-size='xs' data-min="0" data-max="5" data-step="0.1" data-display-only='true')
+      hr
+      a(href='#addtrack').btn.btn-primary.col-md-12 Add New Track

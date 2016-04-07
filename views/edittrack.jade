@@ -1,0 +1,16 @@
+.col-md-8.col-md-offset-2
+	a(href='#/').btn.btn-default.btn-lg
+		span.glyphicon.glyphicon-home(aria-hidden="true")
+	center
+		h1 Edit Track
+		hr
+	div(ng-init='loadSelectedTrack()')
+		.input-group.col-md-12
+			include trackform
+			hr
+			.row
+				input(type="submit" value="Edit" ng-click='editTrack()').btn.btn-success.col-md-12
+			br
+			.row
+				input(type="submit" value="Delete" ng-click='deleteTrack()').btn.btn-danger.col-md-12
+			

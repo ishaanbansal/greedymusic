@@ -1,0 +1,10 @@
+.col-md-8.col-md-offset-2
+	a(href='#/').btn.btn-default.btn-lg
+		span.glyphicon.glyphicon-home(aria-hidden="true")
+	center
+		h1 Add a Track
+		hr
+	.input-group.col-md-12
+		include trackform
+		hr
+		input(type="submit" value="Add" ng-click='addTrack()').btn.btn-primary.col-md-12

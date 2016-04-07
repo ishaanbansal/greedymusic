@@ -1,0 +1,17 @@
+br
+div(ng-show='boxVisible').row
+	.input-group.col-md-6
+		input(type='text' name='genreSearch' ng-model='genreSearch' placeholder='search/add genre').form-control
+		span(type='submit' ng-click='addGenre()').input-group-addon save genre
+	div(ng-repeat='genre in genreList | searchFor:genreSearch:"name"').col-md-6
+		a(ng-click='addTrackGenre(genre._id)' ) {{ genre.name }} 
+		button.btn.btn-default.btn-xs(data-toggle="modal" data-target=".modal-box" ng-click='editGenre(genre)')
+			span.glyphicon.glyphicon-pencil
+div.modal.fade.modal-box(tabindex="-1" role="dialog")
+	div.modal-dialog.modal-sm
+		div.modal-content
+			| Edit Genre name :
+			input.form-control(type='text' ng-model='name')
+			br
+			input.btn.btn-success(type='submit' value='edit' data-dismiss='modal' ng-click='editGenreName()')
+			input.btn.btn-danger(type='submit' value='cancel' data-dismiss='modal' )
